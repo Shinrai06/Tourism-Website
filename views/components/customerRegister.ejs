@@ -1,0 +1,22 @@
+<% layout('layout') %>
+
+<h1>Customer Register</h1>
+<form action="/user/register" method="POST">
+  <label for="Name">Name: </label>
+  <input type="text" placeholder="Name" name="name" id="Name" />
+  <label for="Email">Email: </label>
+  <input type="email" placeholder="Email" name="email" id="Email" />
+  <label for="password">Password: </label>
+  <input type="password" placeholder="Password" name="password" id="password" />
+  <label for="Contact">Mobile No: </label>
+  <input type="text" placeholder="Mobile No." name="contact" id="Contact" />
+  <label for="Address">Address:</label>
+  <textarea
+    name="address"
+    id="Address"
+    cols="30"
+    rows="2"
+    placeholder="Address"
+  ></textarea>
+  <button>Submit</button>
+</form>

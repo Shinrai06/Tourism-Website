@@ -1,0 +1,16 @@
+<% layout('layout') %>
+
+<h1>Admin Register</h1>
+<form action="/admin/register" method="POST">
+  <label for="Name">Name: </label>
+  <input type="text" placeholder="Name" name="name" id="Name" />
+  <label for="Email">Email: </label>
+  <input type="email" placeholder="Email" name="email" id="Email" />
+  <label for="password">Password: </label>
+  <input type="password" placeholder="Password" name="password" id="password" />
+  <label for="Contact1">Mobile No: </label>
+  <input type="text" placeholder="Mobile No." name="contact1" id="Contact1" />
+  <label for="Contact2">Mobile No: </label>
+  <input type="text" placeholder="Mobile No." name="contact2" id="Contact2" />
+  <button>Submit</button>
+</form>
