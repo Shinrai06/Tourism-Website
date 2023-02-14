@@ -1,17 +1,23 @@
 const express = require("express");
 const router = express.Router();
-
-dotenv.config({ path: "../.env" });
+const Customer = require("../Public/js/models/Customer");
 
 router.get("/login", (req, res) => {
-  res.render("/components/login");
+  res.render("components/login");
+});
+
+router.post("/user/login", (req, res) => {
+  res.send(req.body);
 });
 
 router.get("/register", (req, res) => {
-  res.render("/components/customerRegister");
+  res.render("components/user/register");
 });
 
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
+  const { name, email, password, contact, address } = req.body;
+  const newUser = new Customer(name, email, contact, address, password);
+  await newUser.save();
   res.send(req.body);
 });
 

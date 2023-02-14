@@ -1,0 +1,35 @@
+<% layout('layout') %>
+
+<h1>Plans!!!</h1>
+<div class="container row">
+  <% for(let plan of data) { %>
+  <div class="card m-3" style="width: 18rem">
+    <img src="<%=plan.photo%>" class="card-img-top" alt="..." />
+    <div class="card-body">
+      <h5 class="card-title"><%= plan.title%></h5>
+      <p class="card-text">Created By <%=plan.A_id %></p>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Category: <%= plan.category %></li>
+      <li class="list-group-item">Cost: Rs. <%= plan.cost %></li>
+      <li class="list-group-item">
+        <%= plan.days %> Days Trip, <%=plan.G_location %>
+      </li>
+    </ul>
+    <div class="card-body">
+      <form
+        action="/admin/<%=plan.A_id%>/<%=plan.P_id%>?_method=DELETE"
+        method="POST"
+      >
+        <button class="btn btn-sm btn-danger">Delete</button>
+      </form>
+      <br />
+      <a href="/admin/<%=plan.A_id%>/<%=plan.P_id%>" class="btn btn-primary"
+        >Details</a
+      >
+    </div>
+  </div>
+  <% } %>
+</div>
+
+<a href="/admin/<%= id %>/new">Add Plan</a>

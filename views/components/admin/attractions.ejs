@@ -1,0 +1,45 @@
+<% layout('layout') %>
+
+<h1>Tourist Spots Included</h1>
+<div class="container row">
+  <% for( let site of data) { %>
+  <div class="card m-3" style="width: 18rem">
+    <div class="card-body">
+      <h5 class="card-title"><%=site.name%></h5>
+      <p class="card-text"><%=site.description%></p>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Hotel: <%= site.hotel %></li>
+      <li class="list-group-item">Cost: Rs. <%= site.cost %></li>
+      <li class="list-group-item">Location: <%=site.M_location %></li>
+    </ul>
+    <div class="card-body">
+      <form
+        action="/admin/<%=id%>/<%=site.Plan_id%>/<%=site.T_id%>?_method=DELETE"
+        method="POST"
+      >
+        <button class="btn btn-sm btn-danger">Delete</button>
+      </form>
+    </div>
+  </div>
+  <% } %>
+</div>
+<a href="/admin/<%=id%>/<%=P_id%>/new" class="btn btn-warning">New Sight</a>
+
+<h1>Transport Facilities</h1>
+<ul class="list-group list-group-flush">
+  <% for( let vehicle of vehicles ) { %>
+  <li class="list-group-item"><%=vehicle.vehicle%></li>
+  <% } %>
+</ul>
+
+<form action="/admin/<%=id%>/<%=P_id%>" method="POST">
+  <label for="vehicle">Vehicle</label>
+  <input
+    type="text"
+    name="vehicle"
+    id="vehicle"
+    placeholder="Type Of Transport"
+  />
+  <button class="btn btn-sm btn-warning">Add</button>
+</form>

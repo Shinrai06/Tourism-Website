@@ -1,0 +1,72 @@
+<% layout('layout') %>
+
+<form
+  class="row g-3"
+  style="margin: 10px"
+  method="POST"
+  action="/admin/<%=id%>/new"
+>
+  <div class="col-md-6">
+    <label for="title" class="form-label">Title</label>
+    <input
+      type="text"
+      class="form-control"
+      id="title"
+      name="title"
+      placeholder="Title"
+    />
+  </div>
+  <div class="col-md-6">
+    <label for="type" class="form-label">Type</label>
+    <input
+      type="text"
+      class="form-control"
+      id="type"
+      name="type"
+      placeholder="Type of plan"
+    />
+  </div>
+  <div class="col-12">
+    <label for="loc" class="form-label">Location</label>
+    <input
+      type="text"
+      class="form-control"
+      id="loc"
+      placeholder="Main Location(landmarks)"
+      name="loc"
+    />
+  </div>
+  <div class="col-md-3">
+    <label for="cost" class="form-label">Cost</label>
+    <input
+      type="text"
+      class="form-control"
+      id="cost"
+      name="cost"
+      placeholder="Plan Cost"
+    />
+  </div>
+  <div class="col-md-6">
+    <label for="photo" class="form-label">Photo</label>
+    <input
+      type="text"
+      class="form-control"
+      id="photo"
+      placeholder="Image URL"
+      name="Photo"
+    />
+  </div>
+  <div class="col-md-3">
+    <label for="days" class="form-label">Days</label>
+    <input
+      type="text"
+      class="form-control"
+      id="days"
+      name="days"
+      placeholder="No. of days"
+    />
+  </div>
+  <div class="col-4">
+    <button type="submit" class="btn btn-primary">Add</button>
+  </div>
+</form>

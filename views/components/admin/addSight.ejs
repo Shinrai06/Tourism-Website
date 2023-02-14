@@ -1,0 +1,61 @@
+<% layout('layout') %>
+
+<h1>New Site</h1>
+<form
+  class="row g-3"
+  style="margin: 10px"
+  method="POST"
+  action="/admin/<%=id%>/<%=P_id%>/new"
+>
+  <div class="col-md-6">
+    <label for="name" class="form-label">Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      name="name"
+      placeholder="Place Name"
+    />
+  </div>
+  <div class="input-group">
+    <span class="input-group-text">Description</span>
+    <textarea
+      class="form-control"
+      aria-label="With textarea"
+      name="description"
+    ></textarea>
+  </div>
+  <div class="col-12">
+    <label for="loc" class="form-label">Location</label>
+    <input
+      type="text"
+      class="form-control"
+      id="loc"
+      placeholder="Location"
+      name="M_location"
+    />
+  </div>
+  <div class="col-md-3">
+    <label for="cost" class="form-label">Cost</label>
+    <input
+      type="text"
+      class="form-control"
+      id="cost"
+      name="cost"
+      placeholder="Cost"
+    />
+  </div>
+  <div class="col-md-6">
+    <label for="hotel" class="form-label">Hotel Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="hotel"
+      placeholder="Hotel Name"
+      name="hotel"
+    />
+  </div>
+  <div class="col-4">
+    <button type="submit" class="btn btn-primary">Add</button>
+  </div>
+</form>
