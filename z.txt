@@ -1,2 +1,0 @@
-
-<%=plan.date.getDate()%>/<%=plan.date.getMonth()+1%>/<%=plan.date.getFullYear()%>

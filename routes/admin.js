@@ -5,6 +5,7 @@ const Plans = require("../Public/js/models/Plans");
 const Attractions = require("../Public/js/models/Attractions");
 const Vehicles = require("../Public/js/models/Vehicles");
 const Billings = require("../Public/js/models/Billings");
+const Reviews = require("../Public/js/models/Reviews");
 
 router
   .route("/register")
@@ -72,12 +73,14 @@ router
     const [data, setData] = await Attractions.getById(P_id);
     const [vehicles, setvehicles] = await Vehicles.getById(P_id);
     const [users, setUsers] = await Billings.getUserInfoById(P_id);
+    const reviews = await Reviews.find({ P_id: P_id });
     res.render("components/admin/attractions", {
       id,
       P_id,
       data,
       vehicles,
       users,
+      reviews,
     });
   })
   .post(async (req, res) => {

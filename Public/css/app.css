@@ -86,7 +86,6 @@
   background-color:#FFF;
   height : 100%;
   color : #3d231b;
-  overflow-x: scroll;
 }
 @media (max-width: 1200px) { 
   .left{

@@ -5,6 +5,16 @@ const Plans = require("../Public/js/models/Plans");
 const Billings = require("../Public/js/models/Billings");
 const Attractions = require("../Public/js/models/Attractions");
 const Vehicles = require("../Public/js/models/Vehicles");
+const Reviews = require("../Public/js/models/Reviews");
+
+function removeItemOnce(arr, value) {
+  let index = 0;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i]._id.toString() == value) index = i;
+  }
+  arr.splice(index, 1);
+  return arr;
+}
 
 router
   .route("/login")
@@ -46,17 +56,42 @@ router
     res.render("components/user/plans", { id, data });
   });
 
-router.route("/:id/:P_id").get(async (req, res, next) => {
-  const { id, P_id } = req.params;
-  const [data, dummy] = await Attractions.getById(P_id);
-  const [vehicles, dummy2] = await Vehicles.getById(P_id);
-  res.render("components/user/attractions", {
-    id,
-    P_id,
-    data,
-    vehicles,
+router
+  .route("/:id/:P_id")
+  .get(async (req, res, next) => {
+    const { id, P_id } = req.params;
+    const [data, setData] = await Attractions.getById(P_id);
+    const [vehicles, setvehicles] = await Vehicles.getById(P_id);
+    const reviews = await Reviews.find({ P_id: P_id });
+    res.render("components/user/attractions", {
+      id,
+      P_id,
+      data,
+      vehicles,
+      reviews,
+    });
+  })
+  .post(async (req, res, next) => {
+    const { id, P_id } = req.params;
+    const { rating, comment } = req.body;
+    const data = await Reviews.findOne({ U_id: id, P_id: P_id }).exec();
+    if (data == null) {
+      const newReview = new Reviews({
+        U_id: id,
+        P_id: P_id,
+        reviews: [{ comments: comment, rating }],
+      });
+      try {
+        await newReview.save();
+      } catch (err) {
+        res.render("SQLerror", { err: id[1] });
+      }
+    } else {
+      data.reviews.push({ comments: comment, rating });
+      await new Reviews(data).save();
+    }
+    res.redirect(`/user/${id}/${P_id}`);
   });
-});
 
 router
   .route("/:id/:P_id/bill")
@@ -115,6 +150,18 @@ router.post("/:id/:P_id/bill/finish", async (req, res, next) => {
       next();
     }
     res.redirect(`/user/${id}`);
+  } catch (err) {
+    res.render("SQLerror", { err });
+  }
+});
+
+router.route("/:id/:P_id/:R_id").delete(async (req, res) => {
+  const { id, P_id, R_id } = req.params;
+  try {
+    const data = await Reviews.findOne({ U_id: id, P_id }).exec();
+    data.reviews = removeItemOnce(data.reviews, R_id);
+    await new Reviews(data).save();
+    res.redirect(`/user/${id}/${P_id}`);
   } catch (err) {
     res.render("SQLerror", { err });
   }
