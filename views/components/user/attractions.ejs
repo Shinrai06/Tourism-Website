@@ -1,0 +1,50 @@
+<% layout('layout') %>
+
+<section class="m-5">
+  <h1>Tourist Spots Included</h1>
+  <% if (data.length==0) { %>
+  <h3>No Sights Added Yet!!!</h3>
+  <% } else { %>
+  <div class="container row">
+    <% for( let sight of data) { %>
+    <div class="card m-3" style="width: 18rem">
+      <div class="card-body">
+        <h5 class="card-title"><%=sight.name%></h5>
+        <p class="card-text"><%=sight.description%></p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Hotel: <%= sight.hotel %></li>
+        <li class="list-group-item">Location: <%=sight.M_location %></li>
+      </ul>
+    </div>
+    <% } %>
+  </div>
+  <% } %>
+
+  <h1>Transport Facilities</h1>
+
+  <% if (vehicles.length == 0) { %>
+  <h3>None Added Yet!!!</h3>
+  <% } else { %>
+  <table class="table table-dark table-striped table-hover">
+    <thead>
+      <tr>
+        <th scope="col">V_id</th>
+        <th scope="col">Vehicle</th>
+        <th scope="col">Emergency Contact</th>
+        <th scope="col">Additionals Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for( let vehicle of vehicles ) { %>
+      <tr>
+        <th scope="row"><%=vehicle.V_id%></th>
+        <td><%=vehicle.type %></td>
+        <td><%=vehicle.query_contact %></td>
+        <td><%=vehicle.details %></td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+  <% } %>
+</section>

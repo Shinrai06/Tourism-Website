@@ -1,45 +1,139 @@
 <% layout('layout') %>
 
-<h1>Tourist Spots Included</h1>
-<div class="container row">
-  <% for( let site of data) { %>
-  <div class="card m-3" style="width: 18rem">
-    <div class="card-body">
-      <h5 class="card-title"><%=site.name%></h5>
-      <p class="card-text"><%=site.description%></p>
+<section class="m-5">
+  <details>
+    <summary>Customer Info</summary>
+    <table class="table table-dark table-striped table-hover text-center">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Contact</th>
+          <th scope="col">Number of People</th>
+          <th scope="col">Total Amount (INR)</th>
+          <th scope="col">Booking Date (dd-mm-yyy)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for( let user of users ) { %>
+        <tr>
+          <th scope="row"><%=user.name%></th>
+          <td><%=user.email %></td>
+          <td><%=user.contact%></td>
+          <td><%=user.people%></td>
+          <td><%=user.tot_amount%></td>
+          <td>
+            <%=user.date.getDate()%>-<%=user.date.getMonth()+1%>-<%=user.date.getFullYear()%>
+          </td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </details>
+
+  <h1>Tourist Spots Included</h1>
+  <% if (data.length==0) { %>
+  <h3>No Sights Added Yet!!!</h3>
+  <% } else { %>
+  <div class="container row">
+    <% for( let sight of data) { %>
+    <div class="card m-3" style="width: 18rem">
+      <div class="card-body">
+        <h5 class="card-title"><%=sight.name%></h5>
+        <p class="card-text"><%=sight.description%></p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Hotel: <%= sight.hotel %></li>
+        <li class="list-group-item">Location: <%=sight.M_location %></li>
+      </ul>
+      <div class="card-body">
+        <form
+          action="/admin/<%=id%>/<%=sight.Plan_id%>/<%=sight.T_id%>?_method=DELETE"
+          method="POST"
+        >
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </form>
+      </div>
     </div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">Hotel: <%= site.hotel %></li>
-      <li class="list-group-item">Cost: Rs. <%= site.cost %></li>
-      <li class="list-group-item">Location: <%=site.M_location %></li>
-    </ul>
-    <div class="card-body">
-      <form
-        action="/admin/<%=id%>/<%=site.Plan_id%>/<%=site.T_id%>?_method=DELETE"
-        method="POST"
-      >
-        <button class="btn btn-sm btn-danger">Delete</button>
-      </form>
-    </div>
+    <% } %>
   </div>
   <% } %>
-</div>
-<a href="/admin/<%=id%>/<%=P_id%>/new" class="btn btn-warning">New Sight</a>
+  <a href="/admin/<%=id%>/<%=P_id%>/new" class="btn btn-warning">New Sight</a>
 
-<h1>Transport Facilities</h1>
-<ul class="list-group list-group-flush">
-  <% for( let vehicle of vehicles ) { %>
-  <li class="list-group-item"><%=vehicle.vehicle%></li>
+  <h1>Transport Facilities</h1>
+
+  <% if (vehicles.length == 0) { %>
+  <h3>None Added Yet!!!</h3>
+  <% } else { %>
+  <table class="table table-dark table-striped table-hover">
+    <thead>
+      <tr>
+        <th scope="col">V_id</th>
+        <th scope="col">Vehicle</th>
+        <th scope="col">Emergency Contact</th>
+        <th scope="col">Additionals Details</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for( let vehicle of vehicles ) { %>
+      <tr>
+        <th scope="row"><%=vehicle.V_id%></th>
+        <td><%=vehicle.type %></td>
+        <td><%=vehicle.query_contact %></td>
+        <td><%=vehicle.details %></td>
+        <td>
+          <form
+            action="/admin/<%=id%>/<%=P_id%>/vehicle/<%=vehicle.V_id%>?_method=DELETE"
+            method="POST"
+          >
+            <button type="submit" class="btn gg-remove btn-danger"></button>
+          </form>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
   <% } %>
-</ul>
 
-<form action="/admin/<%=id%>/<%=P_id%>" method="POST">
-  <label for="vehicle">Vehicle</label>
-  <input
-    type="text"
-    name="vehicle"
-    id="vehicle"
-    placeholder="Type Of Transport"
-  />
-  <button class="btn btn-sm btn-warning">Add</button>
-</form>
+  <details>
+    <summary>Create New Entry</summary>
+    <form action="/admin/<%=id%>/<%=P_id%>" method="POST" class="m-3">
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <label for="vehicle" class="form-label">Vehicle</label>
+          <select id="vehicle" class="form-select" name="vehicle">
+            <option selected>Car</option>
+            <option>Bus</option>
+            <option>Train</option>
+            <option>Cruise</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="driverContact" class="form-label">Query Contact</label>
+          <input
+            type="text"
+            class="form-control"
+            aria-describedby="contactHelp"
+            id="driverContact"
+            name="query_contact"
+          />
+          <div id="contactHelp" class="form-text">
+            (i.e., for rental vehicles)
+          </div>
+        </div>
+
+        <div class="input-group mt-0.5">
+          <span class="input-group-text">Any additional Details</span>
+          <textarea
+            class="form-control"
+            aria-label="With textarea"
+            name="details"
+          ></textarea>
+        </div>
+      </div>
+
+      <button class="btn btn-sm btn-warning mb-5">Add</button>
+    </form>
+  </details>
+</section>

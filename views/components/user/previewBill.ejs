@@ -1,0 +1,152 @@
+<% layout('layout') %>
+
+<section class="m-5">
+  <h1>Your Bill...</h1>
+  <form method="POST" action="/user/<%=id%>/<%=P_id%>/bill/finish">
+    <div class="mb-4 row g-3">
+      <div class="col-md-6">
+        <label for="userName" class="form-label">User Name: </label>
+        <input
+          type="text"
+          class="form-control"
+          id="userName"
+          name="userName"
+          value="<%=billDetails.userDetails.name%>"
+          readonly
+        />
+      </div>
+      <div class="col-md-6">
+        <label for="inputEmail4" class="form-label">User Email: </label>
+        <input
+          type="email"
+          class="form-control"
+          id="inputEmail4"
+          value="<%=billDetails.userDetails.email %>"
+          name="userEmail"
+          readonly
+        />
+      </div>
+
+      <div class="col-md-4">
+        <label for="date" class="form-label">Departure Date</label>
+        <input
+          type="text"
+          class="form-control"
+          id="date"
+          name="depDate"
+          value="<%=billDetails.planDetails.date.getDate()%>/<%=billDetails.planDetails.date.getMonth()+1%>/<%=billDetails.planDetails.date.getFullYear()%>"
+          readonly
+        />
+      </div>
+      <div class="col-md-8">
+        <label for="depLoc" class="form-label">Departure Location</label>
+        <input
+          type="text"
+          class="form-control"
+          id="depLoc"
+          name="depLoc"
+          value="Bangalore"
+          readonly
+        />
+      </div>
+
+      <div class="col-md-4">
+        <label for="cost" class="form-label">Total Amount: (INR) </label>
+        <input
+          type="text"
+          class="form-control"
+          id="cost"
+          name="cost"
+          value="<%=billDetails.totAmount %>"
+          readonly
+        />
+      </div>
+      <div class="col-md-2">
+        <label for="peopleSelected" class="form-label">No Of People: </label
+        ><input
+          type="number"
+          class="form-control"
+          id="peopleSelected"
+          aria-describedby="slotsHelp"
+          name="peopleSelected"
+          value="<%=billDetails.peopleSelected%>"
+          readonly
+        />
+      </div>
+      <div class="col-md-3">
+        <label for="type" class="form-label">Mode Of Payment: </label>
+        <input
+          type="text"
+          class="form-control"
+          id="type"
+          name="type"
+          value="<%=billDetails.type%>"
+          readonly
+        />
+      </div>
+      <div class="col-md-3">
+        <label for="refNo" class="form-label">Refenence No: </label>
+        <input
+          type="text"
+          class="form-control"
+          id="refNo"
+          name="ref_no"
+          value="<%=billDetails.ref_no%>"
+          readonly
+        />
+      </div>
+      <div class="col-md-4">
+        <label for="coupon" class="form-label">Coupon: </label>
+        <input
+          type="text"
+          class="form-control"
+          id="coupon"
+          name="coupon"
+          value="NaN"
+          readonly
+        />
+      </div>
+    </div>
+
+    <h4>For Queries</h4>
+    <div class="mb-3 row g-3">
+      <div class="col-md-4">
+        <label for="adminName" class="form-label">Admin Name: </label>
+        <input
+          type="text"
+          class="form-control"
+          id="adminName"
+          name="adminName"
+          value="<%=billDetails.planDetails.admin_name%>"
+          readonly
+        />
+      </div>
+      <div class="col-md-4">
+        <label for="adminEmail" class="form-label">Admin Email_Id: </label>
+        <input
+          type="text"
+          class="form-control"
+          id="adminEmail"
+          name="adminEmail"
+          value="<%=billDetails.planDetails.email%>"
+          readonly
+        />
+      </div>
+      <div class="col-md-4">
+        <label for="adminContact" class="form-label">Admin Contact: </label>
+        <input
+          type="text"
+          class="form-control"
+          id="adminContact"
+          name="adminContact"
+          value="<%=billDetails.planDetails.contact%>"
+          readonly
+        />
+      </div>
+    </div>
+    <a href="/user/<%=id%>/<%=P_id%>/bill" class="btn btn-warning col-1"
+      >Edit</a
+    >
+    <button type="submit" class="btn btn-dark col-1">Done</button>
+  </form>
+</section>

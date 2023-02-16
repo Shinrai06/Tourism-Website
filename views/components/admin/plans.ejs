@@ -1,35 +1,48 @@
 <% layout('layout') %>
 
-<h1>Plans!!!</h1>
-<div class="container row">
-  <% for(let plan of data) { %>
-  <div class="card m-3" style="width: 18rem">
-    <img src="<%=plan.photo%>" class="card-img-top" alt="..." />
-    <div class="card-body">
-      <h5 class="card-title"><%= plan.title%></h5>
-      <p class="card-text">Created By <%=plan.A_id %></p>
+<section class="m-5">
+  <h1>Plans!!!</h1>
+  <% if (data.length==0) { %>
+  <h3>No Plans Added Yet!!!</h3>
+  <% } else { %>
+  <div class="container row">
+    <% for(let plan of data) { %>
+    <div class="card m-3 p-2" style="width: 18rem">
+      <img src="<%=plan.photo%>" class="card-img-top" alt="..." />
+      <div class="card-body">
+        <h5 class="card-title"><%=plan.title%></h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          Departure Date:
+          <%=plan.date.getDate()%>/<%=plan.date.getMonth()+1%>/<%=plan.date.getFullYear()%>
+        </li>
+        <li class="list-group-item">
+          Cost per Person: Rs. <%= plan.expense %>
+        </li>
+        <li class="list-group-item">
+          <%= plan.days %> Days Trip, <%=plan.G_location %>
+        </li>
+        <li class="list-group-item">MaxPeople: <%= plan.maxPeople %></li>
+        <li class="list-group-item">Available Slots: <%= plan.availSlots %></li>
+      </ul>
+      <div class="card-body">
+        <a
+          href="/admin/<%=plan.A_id%>/<%=plan.P_id%>"
+          class="btn btn-primary mb-1"
+          >Details</a
+        >
+        <form
+          action="/admin/<%=plan.A_id%>/<%=plan.P_id%>?_method=DELETE"
+          method="POST"
+        >
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </form>
+      </div>
     </div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">Category: <%= plan.category %></li>
-      <li class="list-group-item">Cost: Rs. <%= plan.cost %></li>
-      <li class="list-group-item">
-        <%= plan.days %> Days Trip, <%=plan.G_location %>
-      </li>
-    </ul>
-    <div class="card-body">
-      <form
-        action="/admin/<%=plan.A_id%>/<%=plan.P_id%>?_method=DELETE"
-        method="POST"
-      >
-        <button class="btn btn-sm btn-danger">Delete</button>
-      </form>
-      <br />
-      <a href="/admin/<%=plan.A_id%>/<%=plan.P_id%>" class="btn btn-primary"
-        >Details</a
-      >
-    </div>
+    <% } %>
   </div>
   <% } %>
-</div>
 
-<a href="/admin/<%= id %>/new">Add Plan</a>
+  <a href="/admin/<%= id %>/new" class="btn btn-primary mb-5">Add Plan</a>
+</section>

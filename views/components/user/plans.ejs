@@ -1,0 +1,66 @@
+<% layout('layout') %>
+
+<section class="intro row">
+  <div class="col-lg-2 col-sm-12 left p-4">
+    <form action="/user/<%=id %>" method="POST">
+      <label for="inputPassword5" class="form-label">No. of People</label>
+      <input
+        type="number"
+        id="inputPassword5"
+        class="form-control"
+        aria-describedby="passwordHelpBlock"
+        name="peopleSelected"
+      />
+      <div id="passwordHelpBlock" class="form-text">
+        Enter the number of People you are Booking for...
+      </div>
+      <button type="submit" class="btn btn-dark mt-2">+</button>
+    </form>
+  </div>
+  <div class="col-lg-10 col-sm-12 right px-4">
+    <h1>Available Plans!!!</h1>
+    <% if (data.length==0) { %>
+    <h3>No Plans Added Yet!!!</h3>
+    <% } else { %>
+    <div class="container-fluid row">
+      <% for(let plan of data) { %>
+      <div class="card m-3 p-2" style="width: 18rem">
+        <img src="<%=plan.photo%>" class="card-img-top" alt="..." />
+        <div class="card-body">
+          <h5 class="card-title">Title: <%=plan.title%></h5>
+          <p class="card-text">Created By: <%=plan.admin_name%></p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            Departure Date:
+            <%=plan.date.getDate()%>/<%=plan.date.getMonth()+1%>/<%=plan.date.getFullYear()%>
+          </li>
+          <li class="list-group-item">
+            Cost per Person: Rs. <%= plan.expense %>
+          </li>
+          <li class="list-group-item">
+            <%= plan.days %> Days Trip, <%=plan.G_location %>
+          </li>
+          <li class="list-group-item">MaxPeople: <%= plan.maxPeople %></li>
+          <li class="list-group-item">
+            Available Slots: <%= plan.availSlots %>
+          </li>
+        </ul>
+        <div class="card-body">
+          <a href="/user/<%=id%>/<%=plan.P_id%>" class="btn btn-primary mb-1"
+            >Details</a
+          >
+          <% if (plan.availSlots>0) { %>
+          <a
+            href="/user/<%=id%>/<%=plan.P_id%>/bill"
+            class="btn btn-primary mb-1"
+            >Select Plan</a
+          >
+          <% } %>
+        </div>
+      </div>
+      <% } %>
+    </div>
+    <% } %>
+  </div>
+</section>

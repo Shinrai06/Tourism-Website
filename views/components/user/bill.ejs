@@ -1,0 +1,88 @@
+<% layout('layout') %>
+
+<section class="m-5">
+  <h1>Enter the Confirmation Details</h1>
+  <form method="POST" action="/user/<%=id%>/<%=P_id%>/bill">
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+        <label for="cost" class="form-label">Total Amount: (INR) </label>
+        <input
+          type="text"
+          class="form-control"
+          id="cost"
+          name="cost"
+          value="<%=totAmount %>"
+          readonly
+        />
+      </div>
+      <div class="col-md-6">
+        <label for="peopleSelected" class="form-label">No Of People: </label
+        ><input
+          type="number"
+          class="form-control"
+          id="peopleSelected"
+          aria-describedby="slotsHelp"
+          name="peopleSelected"
+          value="<%=peopleSelected%>"
+        />
+        <div id="slotsHelp" class="form-text">
+          Refresh the page to get Available Spots...
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label for="type" class="form-label">Mode Of Payment: </label>
+        <input
+          type="text"
+          class="form-control"
+          id="type"
+          name="type"
+          value="UPI"
+        />
+      </div>
+      <div class="col-md-6">
+        <label for="refNo" class="form-label">Refenence No: </label>
+        <input
+          type="text"
+          class="form-control"
+          aria-describedby="refHelp"
+          id="refNo"
+          name="ref_no"
+        />
+        <div id="refHelp" class="form-text">
+          Details that help in payment Confirmation...
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label for="costPerPeson" class="form-label"
+          >Per Person Cost: (INR)
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          id="costPerPeson"
+          value="<%=cost%>"
+          disabled
+        />
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success col-1">Preview</button>
+  </form>
+  <a
+    href="https://sparkly-daffodil-103252.netlify.app/"
+    class="btn btn-info my-3"
+    >Payment GateWay</a
+  >
+</section>
+
+<script>
+  const input = document.querySelector("#peopleSelected");
+  const totCost = document.getElementById("cost");
+  const costPerPerson = document.getElementById("costPerPeson");
+
+  input.addEventListener("input", updateValue);
+
+  function updateValue(e) {
+    let ans = costPerPerson.value * e.target.value;
+    totCost.value = +ans.toFixed(2);
+  }
+</script>

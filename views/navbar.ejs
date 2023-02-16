@@ -1,5 +1,33 @@
-<nav class="navbar navbar-dark bg-dark">
+<nav class="navbar navbar-dark bg-dark navbar-expand sticky-top">
   <div class="container-fluid">
     <a class="btn btn-light p-0.3 m-2" href="/">Home </a>
+  </div>
+  <div class="btn-group mx-2">
+    <button
+      type="button"
+      class="btn btn-primary dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      Sign in
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" href="/admin/login">Admin</a></li>
+      <li><a class="dropdown-item" href="/user/login">User</a></li>
+    </ul>
+  </div>
+  <div class="btn-group me-4">
+    <button
+      type="button"
+      class="btn btn-primary dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      Register
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" href="/admin/register">Admin</a></li>
+      <li><a class="dropdown-item" href="/user/register">User</a></li>
+    </ul>
   </div>
 </nav>

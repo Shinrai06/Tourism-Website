@@ -1,22 +1,65 @@
 <% layout('layout') %>
 
-<h1>Customer Register</h1>
-<form action="/user/register" method="POST">
-  <label for="Name">Name: </label>
-  <input type="text" placeholder="Name" name="name" id="Name" />
-  <label for="Email">Email: </label>
-  <input type="email" placeholder="Email" name="email" id="Email" />
-  <label for="password">Password: </label>
-  <input type="password" placeholder="Password" name="password" id="password" />
-  <label for="Contact">Mobile No: </label>
-  <input type="text" placeholder="Mobile No." name="contact" id="Contact" />
-  <label for="Address">Address:</label>
-  <textarea
-    name="address"
-    id="Address"
-    cols="30"
-    rows="2"
-    placeholder="Address"
-  ></textarea>
-  <button>Submit</button>
-</form>
+<section class="m-5">
+  <h1>Customer Register</h1>
+  <form action="/user/register" method="POST">
+    <div class="mb-3 col-4">
+      <label for="Name" class="form-label">Name</label>
+      <input type="text" class="form-control" name="name" id="Name" />
+    </div>
+    <div class="mb-3 col-4">
+      <label for="Email" class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        aria-describedby="emailHelp"
+        name="email"
+        id="Email"
+      />
+      <div id="emailHelp" class="form-text">
+        Your email will be sent to the owner of the plan which you choose...
+      </div>
+    </div>
+    <div class="row my-3">
+      <div class="col-auto">
+        <label for="password" class="col-form-label">Password: </label>
+      </div>
+      <div class="col-auto">
+        <input
+          type="password"
+          id="password"
+          class="form-control"
+          aria-describedby="passwordHelpInline"
+          name="password"
+        />
+        <div id="passwordHelpInline" class="form-text">
+          Try to keep a strong password...
+        </div>
+      </div>
+      <div class="col-auto">
+        <label for="contact" class="col-form-label">Contact :</label>
+      </div>
+      <div class="col-4">
+        <input
+          id="contact"
+          type="text"
+          class="form-control"
+          placeholder="Phone No"
+          aria-label="First name"
+          name="contact"
+        />
+      </div>
+    </div>
+    <div class="col-auto form-floating mb-3">
+      <textarea
+        class="form-control"
+        placeholder="Leave a comment here"
+        id="floatingTextarea"
+        style="height: 6em"
+        name="address"
+      ></textarea>
+      <label for="floatingTextarea">Address</label>
+    </div>
+    <button class="btn btn-success">Submit</button>
+  </form>
+</section>

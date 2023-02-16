@@ -20,15 +20,24 @@ class Admin {
         '${this.contact1}', 
         '${this.contact2}', 
         '${this.password}')`;
-    await SqlDB.execute(query);
+    try {
+      await SqlDB.execute(query);
+    } catch (err) {
+      return [0, err];
+    }
     query = `select A_id from ADMINISTRATORS where email='${this.email}'`;
     let res = await SqlDB.execute(query);
     let data = res[0].find((itm) => itm.A_id != "");
-    return data.A_id;
+    return [data.A_id, ""];
   }
 
   static findAll() {
     const query = `select * from ADMINISTRATORS;`;
+    return SqlDB.execute(query);
+  }
+
+  static getNameById(id) {
+    const query = `select name from ADMINISTRATORS where A_id = ${id}`;
     return SqlDB.execute(query);
   }
 

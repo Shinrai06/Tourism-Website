@@ -4,6 +4,7 @@ const Admin = require("../Public/js/models/Admin");
 const Plans = require("../Public/js/models/Plans");
 const Attractions = require("../Public/js/models/Attractions");
 const Vehicles = require("../Public/js/models/Vehicles");
+const Billings = require("../Public/js/models/Billings");
 
 router
   .route("/register")
@@ -14,19 +15,21 @@ router
     const { name, email, password, contact1, contact2 } = req.body;
     const newAdmin = new Admin(name, email, contact1, contact2, password);
     let id = await newAdmin.save();
-    res.redirect(`/admin/${id}`);
+    if (id[0] == 0) res.render("SQLerror", { err: id[1] });
+    else res.redirect(`/admin/${id[0]}`);
   });
 
 router
   .route("/login")
   .get((req, res) => {
-    res.render("components/login");
+    let ref = "admin";
+    res.render("components/login", { ref });
   })
   .post(async (req, res, next) => {
     const { email, password } = req.body;
     let id = await Admin.validate(email, password);
     if (id != 0) res.redirect(`/admin/${id}`);
-    else res.send("Invalid Credentials");
+    else res.render("SQLerror", { err: "Invalid Credentials" });
   });
 
 router.route("/:id").get(async (req, res) => {
@@ -42,31 +45,60 @@ router
     res.render("components/admin/addPlan", { id });
   })
   .post(async (req, res) => {
-    const { title, type, loc, cost, Photo, days } = req.body;
+    const { title, loc, expense, photo, days, date, maxPeople } = req.body;
     const { id } = req.params;
-    const plan = new Plans(title, type, loc, cost, Photo, days, id);
-    await plan.save();
-    res.redirect(`/admin/${id}`);
+    const plan = new Plans(
+      id,
+      title,
+      loc,
+      expense,
+      photo,
+      days,
+      date,
+      maxPeople
+    );
+    try {
+      await plan.save();
+      res.redirect(`/admin/${id}`);
+    } catch (err) {
+      res.render("SQLerror", { err });
+    }
   });
 
 router
   .route("/:id/:P_id")
   .get(async (req, res, next) => {
     const { id, P_id } = req.params;
-    const [data, dummy] = await Attractions.getById(P_id);
-    const [vehicles, dummy2] = await Vehicles.getById(P_id);
-    res.render("components/admin/attractions", { id, P_id, data, vehicles });
+    const [data, setData] = await Attractions.getById(P_id);
+    const [vehicles, setvehicles] = await Vehicles.getById(P_id);
+    const [users, setUsers] = await Billings.getUserInfoById(P_id);
+    res.render("components/admin/attractions", {
+      id,
+      P_id,
+      data,
+      vehicles,
+      users,
+    });
   })
   .post(async (req, res) => {
     const { P_id, id } = req.params;
-    const vehicle = new Vehicles(req.body.vehicle, P_id);
-    await vehicle.save();
-    res.redirect(`${P_id}`);
+    const { vehicle, query_contact, details } = req.body;
+    const V = new Vehicles(vehicle, query_contact, details, P_id);
+    try {
+      await V.save();
+      res.redirect(`${P_id}`);
+    } catch (err) {
+      res.render("SQLerror", { err });
+    }
   })
   .delete(async (req, res) => {
     const { P_id, id } = req.params;
-    const [success, _] = await Plans.removeById(P_id);
-    res.redirect(`/admin/${id}`);
+    try {
+      await Plans.removeById(P_id);
+      res.redirect(`/admin/${id}`);
+    } catch (err) {
+      res.render("SQLerror", { err });
+    }
   });
 
 router
@@ -76,21 +108,28 @@ router
     res.render("components/admin/addSight", { id, P_id });
   })
   .post(async (req, res, next) => {
-    const { name, description, cost, hotel, M_location } = req.body;
+    const { name, description, hotel, M_location } = req.body;
     const { id, P_id } = req.params;
-    const site = new Attractions(
-      name,
-      description,
-      M_location,
-      cost,
-      hotel,
-      P_id
-    );
-    await site.save();
-    res.redirect(`/admin/${id}/${P_id}`);
+    const site = new Attractions(name, description, M_location, hotel, P_id);
+    try {
+      await site.save();
+      res.redirect(`/admin/${id}/${P_id}`);
+    } catch (err) {
+      res.render("SQLerror", { err });
+    }
   });
 
-router.route("/:id/:P_id/:T_id").delete(async (req, res, next) => {
+router.delete("/:id/:P_id/vehicle/:V_id", async (req, res) => {
+  let { id, V_id, P_id } = req.params;
+  try {
+    await Vehicles.removeById(V_id);
+    res.redirect(`/admin/${id}/${P_id}`);
+  } catch (err) {
+    res.render("SQLerror", { err });
+  }
+});
+
+router.delete("/:id/:P_id/:T_id", async (req, res, next) => {
   const { P_id, id, T_id } = req.params;
   const [success, _] = await Attractions.removeById(T_id);
   res.redirect(`/admin/${id}/${P_id}`);

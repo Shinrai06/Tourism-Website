@@ -1,16 +1,73 @@
 <% layout('layout') %>
 
-<h1>Admin Register</h1>
-<form action="/admin/register" method="POST">
-  <label for="Name">Name: </label>
-  <input type="text" placeholder="Name" name="name" id="Name" />
-  <label for="Email">Email: </label>
-  <input type="email" placeholder="Email" name="email" id="Email" />
-  <label for="password">Password: </label>
-  <input type="password" placeholder="Password" name="password" id="password" />
-  <label for="Contact1">Mobile No: </label>
-  <input type="text" placeholder="Mobile No." name="contact1" id="Contact1" />
-  <label for="Contact2">Mobile No: </label>
-  <input type="text" placeholder="Mobile No." name="contact2" id="Contact2" />
-  <button>Submit</button>
-</form>
+<section class="m-5">
+  <h1>Admin Register</h1>
+  <form action="/admin/register" method="POST">
+    <div class="mb-3 col-4">
+      <label for="Name" class="form-label">Name</label>
+      <input type="text" class="form-control" name="name" id="Name" />
+    </div>
+    <div class="mb-3 col-4">
+      <label for="Email" class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        aria-describedby="emailHelp"
+        name="email"
+        id="Email"
+      />
+      <div id="emailHelp" class="form-text">
+        We'll never share your email with anyone else.
+      </div>
+    </div>
+
+    <div class="row my-3">
+      <div class="col-auto">
+        <label for="contact1" class="col-form-label">Contact 1:</label>
+      </div>
+      <div class="col-4">
+        <input
+          id="contact1"
+          type="text"
+          class="form-control"
+          placeholder="Phone No 1"
+          aria-label="First name"
+          name="contact1"
+        />
+      </div>
+      <div class="col-auto">
+        <label for="contact2" class="col-form-label">Contact 2:</label>
+      </div>
+      <div class="col-4">
+        <input
+          id="contact2"
+          type="text"
+          class="form-control"
+          placeholder="Phone No 2"
+          aria-label="Last name"
+          name="contact2"
+        />
+      </div>
+    </div>
+    <div class="row my-3">
+      <div class="col-auto">
+        <label for="password" class="col-form-label">Password: </label>
+      </div>
+      <div class="col-auto">
+        <input
+          type="password"
+          id="password"
+          class="form-control"
+          aria-describedby="passwordHelpInline"
+          name="password"
+        />
+      </div>
+      <div class="col-auto">
+        <span id="passwordHelpInline" class="form-text">
+          Try to keep a strong password...
+        </span>
+      </div>
+    </div>
+    <button class="btn btn-success">Submit</button>
+  </form>
+</section>

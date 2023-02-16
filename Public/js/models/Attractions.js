@@ -1,25 +1,25 @@
 const SqlDB = require("../../../config/SqlDB");
 
 class Attractions {
-  constructor(name, description, loc, cost, hotel, P_id) {
+  constructor(name, description, loc, hotel, P_id) {
     this.name = name;
     this.description = description;
     this.loc = loc;
-    this.cost = cost;
     this.hotel = hotel;
     this.P_id = P_id;
   }
-  async save() {
-    let query = `INSERT INTO TOURISM_ATTRACTION (name, description, cost, hotel, M_location, Plan_id)
+
+  save() {
+    let query = `INSERT INTO TOURISM_ATTRACTION (name, description, hotel, M_location, Plan_id)
     VALUES(
         '${this.name}',
         '${this.description}',
-        ${this.cost},
         '${this.hotel}',
         '${this.loc}',
-        '${this.P_id}'
+        ${this.P_id}
         )`;
-    await SqlDB.execute(query);
+
+    return SqlDB.execute(query);
   }
 
   static findAll() {
