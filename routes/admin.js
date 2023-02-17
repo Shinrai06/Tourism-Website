@@ -6,6 +6,11 @@ const Attractions = require("../Public/js/models/Attractions");
 const Vehicles = require("../Public/js/models/Vehicles");
 const Billings = require("../Public/js/models/Billings");
 const Reviews = require("../Public/js/models/Reviews");
+const Photos = require("../Public/js/models/Photos");
+const { storage } = require("../config/Cloudinary");
+const multer = require("multer");
+const upload = multer({ storage });
+const getDate = require("../Public/js/controllers/getDate");
 
 router
   .route("/register")
@@ -70,10 +75,11 @@ router
   .route("/:id/:P_id")
   .get(async (req, res, next) => {
     const { id, P_id } = req.params;
-    const [data, setData] = await Attractions.getById(P_id);
+    const [sights, setSights] = await Attractions.getById(P_id);
     const [vehicles, setvehicles] = await Vehicles.getById(P_id);
     const [users, setUsers] = await Billings.getUserInfoById(P_id);
     const reviews = await Reviews.find({ P_id: P_id });
+    const data = await getDate.setAttractionsForRender(sights);
     res.render("components/admin/attractions", {
       id,
       P_id,
@@ -110,12 +116,20 @@ router
     const { id, P_id } = req.params;
     res.render("components/admin/addSight", { id, P_id });
   })
-  .post(async (req, res, next) => {
+  .post(upload.array("images", 10), async (req, res, next) => {
     const { name, description, hotel, M_location } = req.body;
     const { id, P_id } = req.params;
     const site = new Attractions(name, description, M_location, hotel, P_id);
+    const images = req.files.map((f) => ({
+      url: f.path,
+      filename: f.filename,
+    }));
     try {
-      await site.save();
+      const T_id = await site.save();
+      if (T_id == 0) {
+        res.render("SQLerror", { err });
+      }
+      await new Photos({ A_id: id, T_id: T_id[0], images: images }).save();
       res.redirect(`/admin/${id}/${P_id}`);
     } catch (err) {
       res.render("SQLerror", { err });
@@ -135,6 +149,11 @@ router.delete("/:id/:P_id/vehicle/:V_id", async (req, res) => {
 router.delete("/:id/:P_id/:T_id", async (req, res, next) => {
   const { P_id, id, T_id } = req.params;
   const [success, _] = await Attractions.removeById(T_id);
+  try {
+    await Photos.deleteOne({ T_id: T_id });
+  } catch (err) {
+    res.render("SQLerror", { err });
+  }
   res.redirect(`/admin/${id}/${P_id}`);
 });
 

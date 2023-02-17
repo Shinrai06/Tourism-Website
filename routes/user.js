@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Customer = require("../Public/js/models/Customer");
-const Plans = require("../Public/js/models/Plans");
+const getDate = require("../Public/js/controllers/getDate");
 const Billings = require("../Public/js/models/Billings");
 const Attractions = require("../Public/js/models/Attractions");
 const Vehicles = require("../Public/js/models/Vehicles");
 const Reviews = require("../Public/js/models/Reviews");
+const Plans = require("../Public/js/models/Plans");
 
 function removeItemOnce(arr, value) {
   let index = 0;
@@ -60,9 +61,10 @@ router
   .route("/:id/:P_id")
   .get(async (req, res, next) => {
     const { id, P_id } = req.params;
-    const [data, setData] = await Attractions.getById(P_id);
+    const [sights, setSights] = await Attractions.getById(P_id);
     const [vehicles, setvehicles] = await Vehicles.getById(P_id);
     const reviews = await Reviews.find({ P_id: P_id });
+    const data = await getDate.setAttractionsForRender(sights);
     res.render("components/user/attractions", {
       id,
       P_id,

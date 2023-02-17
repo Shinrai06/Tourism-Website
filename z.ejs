@@ -1,5 +1,48 @@
-<%=plan.date.getDate()%>/<%=plan.date.getMonth()+1%>/<%=plan.date.getFullYear()%>
+<!-- <%=plan.date.getDate()%>/<%=plan.date.getMonth()+1%>/<%=plan.date.getFullYear()%>
 <section class="intro row">
   <div class="col-lg-2 col-sm-12 left p-4"></div>
   <div class="col-lg-2 col-sm-12 right px-4"></div>
 </section>
+
+<%sight.images.forEach((img, i) => {%>
+<div class="carousel-item active">
+  <img src="<%=img.url%>" class="d-block w-100" alt="xyz" />
+</div>
+<%})%> -->
+
+<div class="container row">
+  <% for( let sight of data) { %>
+  <div class="card m-3" style="width: 18rem">
+    <div class="card-body">
+      <h5 class="card-title"><%=sight.name%></h5>
+      <p class="card-text"><%=sight.description%></p>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Hotel: <%= sight.hotel %></li>
+      <li class="list-group-item">Location: <%=sight.M_location %></li>
+    </ul>
+  </div>
+  <% } %>
+</div>
+
+// removed because of conflict from attractions.ejs for both admin and user <%
+if (sight.images.length>1) { %>
+<button
+  class="carousel-control-prev"
+  type="button"
+  data-bs-target="#carouselExampleControls"
+  data-bs-slide="prev"
+>
+  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+  <span class="visually-hidden">Previous</span>
+</button>
+<button
+  class="carousel-control-next"
+  type="button"
+  data-bs-target="#carouselExampleControls"
+  data-bs-slide="next"
+>
+  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+  <span class="visually-hidden">Next</span>
+</button>
+<% } %>

@@ -1,9 +1,11 @@
 #bgImg {
-    background-image: url("https://source.unsplash.com/random/1000x1000?sig=3");
+    background-image: url("https://res.cloudinary.com/dpsi5nnkn/image/upload/v1676631349/DBD_LAB/ctifnqg1ggymlewfgoby.jpg");
+    background-size: 100% 100%;
+    height: 100vh;
     background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
+    position: relative;
   }
+
 
   details {
     margin: 0 auto ;

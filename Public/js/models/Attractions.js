@@ -9,7 +9,7 @@ class Attractions {
     this.P_id = P_id;
   }
 
-  save() {
+  async save() {
     let query = `INSERT INTO TOURISM_ATTRACTION (name, description, hotel, M_location, Plan_id)
     VALUES(
         '${this.name}',
@@ -19,7 +19,15 @@ class Attractions {
         ${this.P_id}
         )`;
 
-    return SqlDB.execute(query);
+    try {
+      await SqlDB.execute(query);
+    } catch (err) {
+      return [0, err];
+    }
+    query = `select T_id from TOURISM_ATTRACTION order by T_id desc`;
+    let res = await SqlDB.execute(query);
+    let data = res[0].find((itm) => itm.T_id != "");
+    return [data.T_id, ""];
   }
 
   static findAll() {

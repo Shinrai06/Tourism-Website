@@ -6,6 +6,7 @@
     style="margin: 10px"
     method="POST"
     action="/admin/<%=id%>/<%=P_id%>/new"
+    enctype="multipart/form-data"
   >
     <div class="row g-3 mb-3">
       <div class="col-md-6">
@@ -46,7 +47,18 @@
           name="hotel"
         />
       </div>
+      <div class="col-md-6">
+        <label for="images" class="form-label">Images</label>
+        <input
+          type="file"
+          class="form-control"
+          id="images"
+          name="images"
+          multiple
+        />
+      </div>
     </div>
     <button type="submit" class="btn btn-primary">Add Sight</button>
+    <a href="/admin/<%=id%>/<%=P_id%>" class="btn btn-info">Back</a>
   </form>
 </section>
