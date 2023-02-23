@@ -32,6 +32,11 @@ class Billings {
     const query = `SELECT name, email, contact, tot_amount, people, date FROM dbd.billing b, dbd.customers c WHERE c.U_id = b.user_id and b.pl_id=${id};`;
     return SqlDB.execute(query);
   }
+
+  static getUserBookingsById(u_id) {
+    const query = `SELECT title,  b.date as bookingDate, p.date as departureDate, ref_no, type, coupon, tot_amount, people FROM dbd.billing b, dbd.PLANS p WHERE p.P_id=b.pl_id and b.user_id = ${u_id} order by p.date desc`;
+    return SqlDB.execute(query);
+  }
 }
 
 module.exports = Billings;

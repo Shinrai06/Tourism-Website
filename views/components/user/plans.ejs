@@ -18,6 +18,39 @@
     </form>
   </div>
   <div class="col-lg-10 col-sm-12 right px-4">
+    <details>
+      <summary>Your Booking Details!!!</summary>
+      <table class="table table-dark table-striped table-hover text-center">
+        <thead>
+          <tr>
+            <th scope="col">Plan</th>
+            <th scope="col">Booked For</th>
+            <th scope="col">Mode of Payment</th>
+            <th scope="col">Payment Ref_no</th>
+            <th scope="col">Total Amount (INR)</th>
+            <th scope="col">Booking Date (dd-mm-yyy)</th>
+            <th scope="col">Departure Date Date (dd-mm-yyy)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for( let booking of bookings ) { %>
+          <tr>
+            <th scope="row"><%=booking.title%></th>
+            <td><%=booking.people%></td>
+            <td><%=booking.type%></td>
+            <td><%=booking.ref_no%></td>
+            <td><%=booking.tot_amount%></td>
+            <td>
+              <%=booking.bookingDate.getDate()%>-<%=booking.bookingDate.getMonth()+1%>-<%=booking.bookingDate.getFullYear()%>
+            </td>
+            <td>
+              <%=booking.departureDate.getDate()%>-<%=booking.departureDate.getMonth()+1%>-<%=booking.departureDate.getFullYear()%>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </details>
     <h1>Available Plans!!!</h1>
     <% if (data.length==0) { %>
     <h3>No Plans Added Yet!!!</h3>

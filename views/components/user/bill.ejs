@@ -24,6 +24,8 @@
           aria-describedby="slotsHelp"
           name="peopleSelected"
           value="<%=peopleSelected%>"
+          min="0"
+          required
         />
         <div id="slotsHelp" class="form-text">
           Refresh the page to get Available Spots...
@@ -37,6 +39,7 @@
           id="type"
           name="type"
           value="UPI"
+          required
         />
       </div>
       <div class="col-md-6">
@@ -47,6 +50,7 @@
           aria-describedby="refHelp"
           id="refNo"
           name="ref_no"
+          required
         />
         <div id="refHelp" class="form-text">
           Details that help in payment Confirmation...
@@ -66,12 +70,15 @@
       </div>
     </div>
     <button type="submit" class="btn btn-success col-1">Preview</button>
+    <a href="/user/<%=id%>/" class="btn btn-info ms-4">Plans View</a>
   </form>
-  <a
-    href="https://sparkly-daffodil-103252.netlify.app/"
-    class="btn btn-info my-3"
-    >Payment GateWay</a
-  >
+  <div class="position-relative">
+    <a
+      href="https://sparkly-daffodil-103252.netlify.app/"
+      class="btn btn-primary position-absolute top-0 end-0"
+      >Payment GateWay</a
+    >
+  </div>
 </section>
 
 <script>

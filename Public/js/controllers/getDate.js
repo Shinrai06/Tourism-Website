@@ -25,3 +25,9 @@ exports.setAttractionsForRender = async (temp) => {
   }
   return ref;
 };
+
+exports.getFileName = async (T_id) => {
+  let { images } = await Photos.findOne({ T_id: T_id }, { images: 1, _id: 0 });
+  let fileNames = images.map((img) => img.filename);
+  return fileNames;
+};

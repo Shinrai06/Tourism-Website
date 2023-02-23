@@ -27,7 +27,7 @@ router
     const { email, password } = req.body;
     let id = await Customer.validate(email, password);
     if (id != 0) res.redirect(`/user/${id}`);
-    else res.render("SQLerror", { err: "Invalid Credentials" });
+    else res.render("SQLerror", { err: "Invalid Credentials/ Not Registered" });
   });
 
 router
@@ -47,14 +47,16 @@ router
   .route("/:id")
   .get(async (req, res, next) => {
     const { id } = req.params;
-    const [data, _] = await Plans.findAllWithAdminName();
-    res.render("components/user/plans", { data, id });
+    const [data, setData] = await Plans.findAllWithAdminName();
+    const [bookings, setBookings] = await Billings.getUserBookingsById(id);
+    res.render("components/user/plans", { data, id, bookings });
   })
   .post(async (req, res) => {
     const { id } = req.params;
     const { peopleSelected } = req.body;
-    const [data, _] = await Plans.getByNoOfPeople(peopleSelected);
-    res.render("components/user/plans", { id, data });
+    const [data, setData] = await Plans.getByNoOfPeople(peopleSelected);
+    const [bookings, setBookings] = await Billings.getUserBookingsById(id);
+    res.render("components/user/plans", { id, data, bookings });
   });
 
 router
@@ -73,7 +75,7 @@ router
       reviews,
     });
   })
-  .post(async (req, res, next) => {
+  .post(async (req, res) => {
     const { id, P_id } = req.params;
     const { rating, comment } = req.body;
     const data = await Reviews.findOne({ U_id: id, P_id: P_id }).exec();
@@ -132,7 +134,7 @@ router
     res.render("components/user/previewBill", { id, P_id, billDetails });
   });
 
-router.post("/:id/:P_id/bill/finish", async (req, res, next) => {
+router.post("/:id/:P_id/bill/finish", async (req, res) => {
   const { peopleSelected, ref_no, type, coupon, cost } = req.body;
   const { id, P_id } = req.params;
   const newBill = new Billings(
@@ -145,13 +147,12 @@ router.post("/:id/:P_id/bill/finish", async (req, res, next) => {
     peopleSelected
   );
   try {
-    await newBill.save();
     let x = await Plans.updateSlots(P_id, peopleSelected);
-    if (!x) {
-      res.render("SQLerror", { err });
-      next();
+    if (x) {
+      await newBill.save();
+      res.redirect(`/user/${id}`);
     }
-    res.redirect(`/user/${id}`);
+    res.render("SQLerror", { err: "No Available Slots" });
   } catch (err) {
     res.render("SQLerror", { err });
   }

@@ -7,7 +7,7 @@ const Vehicles = require("../Public/js/models/Vehicles");
 const Billings = require("../Public/js/models/Billings");
 const Reviews = require("../Public/js/models/Reviews");
 const Photos = require("../Public/js/models/Photos");
-const { storage } = require("../config/Cloudinary");
+const { storage, cloudinary } = require("../config/Cloudinary");
 const multer = require("multer");
 const upload = multer({ storage });
 const getDate = require("../Public/js/controllers/getDate");
@@ -17,7 +17,7 @@ router
   .get((req, res) => {
     res.render("components/admin/register");
   })
-  .post(async (req, res, next) => {
+  .post(async (req, res) => {
     const { name, email, password, contact1, contact2 } = req.body;
     const newAdmin = new Admin(name, email, contact1, contact2, password);
     let id = await newAdmin.save();
@@ -31,11 +31,11 @@ router
     let ref = "admin";
     res.render("components/login", { ref });
   })
-  .post(async (req, res, next) => {
+  .post(async (req, res) => {
     const { email, password } = req.body;
     let id = await Admin.validate(email, password);
     if (id != 0) res.redirect(`/admin/${id}`);
-    else res.render("SQLerror", { err: "Invalid Credentials" });
+    else res.render("SQLerror", { err: "Invalid Credentials/ Not Registered" });
   });
 
 router.route("/:id").get(async (req, res) => {
@@ -73,7 +73,7 @@ router
 
 router
   .route("/:id/:P_id")
-  .get(async (req, res, next) => {
+  .get(async (req, res) => {
     const { id, P_id } = req.params;
     const [sights, setSights] = await Attractions.getById(P_id);
     const [vehicles, setvehicles] = await Vehicles.getById(P_id);
@@ -116,7 +116,7 @@ router
     const { id, P_id } = req.params;
     res.render("components/admin/addSight", { id, P_id });
   })
-  .post(upload.array("images", 10), async (req, res, next) => {
+  .post(upload.array("images", 10), async (req, res) => {
     const { name, description, hotel, M_location } = req.body;
     const { id, P_id } = req.params;
     const site = new Attractions(name, description, M_location, hotel, P_id);
@@ -146,11 +146,15 @@ router.delete("/:id/:P_id/vehicle/:V_id", async (req, res) => {
   }
 });
 
-router.delete("/:id/:P_id/:T_id", async (req, res, next) => {
+router.delete("/:id/:P_id/:T_id", async (req, res) => {
   const { P_id, id, T_id } = req.params;
-  const [success, _] = await Attractions.removeById(T_id);
   try {
+    const fileNames = await getDate.getFileName(T_id);
     await Photos.deleteOne({ T_id: T_id });
+    await Attractions.removeById(T_id);
+    for (let filename of fileNames) {
+      await cloudinary.uploader.destroy(filename);
+    }
   } catch (err) {
     res.render("SQLerror", { err });
   }

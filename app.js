@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, "/Public")));
 // PASSPORT CONFIG
 // app.use(
 //   require("express-session")({
-//     secret: "shibas are the best dogs in the world.",
+//     secret: process.env.sessionSecret,
 //     resave: false,
 //     saveUninitialized: false
 //   })
