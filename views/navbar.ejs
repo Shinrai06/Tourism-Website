@@ -2,6 +2,11 @@
   <div class="container-fluid">
     <a class="btn btn-light p-0.3 m-2" href="/">Home </a>
   </div>
+  <% if (currentUser || admin) { %>
+  <form action="/logout" method="POST">
+    <button class="btn btn-primary me-4">Logout</button>
+  </form>
+  <% } else { %>
   <div class="btn-group mx-2">
     <button
       type="button"
@@ -30,4 +35,5 @@
       <li><a class="dropdown-item" href="/user/register">User</a></li>
     </ul>
   </div>
+  <% } %>
 </nav>

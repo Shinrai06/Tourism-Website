@@ -7,6 +7,7 @@ const Attractions = require("../Public/js/models/Attractions");
 const Vehicles = require("../Public/js/models/Vehicles");
 const Reviews = require("../Public/js/models/Reviews");
 const Plans = require("../Public/js/models/Plans");
+const { isUserLoggedIn } = require("../middleWare");
 
 function removeItemOnce(arr, value) {
   let index = 0;
@@ -23,11 +24,19 @@ router
     let ref = "user";
     res.render("components/login", { ref });
   })
-  .post(async (req, res, next) => {
+  .post(async (req, res) => {
     const { email, password } = req.body;
     let id = await Customer.validate(email, password);
-    if (id != 0) res.redirect(`/user/${id}`);
-    else res.render("SQLerror", { err: "Invalid Credentials/ Not Registered" });
+    if (id != 0) {
+      req.session.user = email;
+      req.flash("success", "Successfull login!!");
+      return res.redirect(`/user/${id}`);
+    }
+    req.flash(
+      "error",
+      "Error Login, not registered or invalid crediantials..."
+    );
+    res.redirect("/user/login");
   });
 
 router
@@ -39,19 +48,24 @@ router
     const { name, email, password, contact, address } = req.body;
     const newUser = new Customer(name, email, contact, address, password);
     const id = await newUser.save();
-    if (id[0] == 0) res.render("SQLerror", { err: id[1] });
-    else res.redirect(`/user/${id[0]}`);
+    if (id[0] == 0) {
+      req.flash("error", "Already Registered!!");
+      return res.redirect(`/user/register`);
+    }
+    req.session.user = email;
+    req.flash("success", "Successfully Registered!!");
+    res.redirect(`/user/${id[0]}`);
   });
 
 router
   .route("/:id")
-  .get(async (req, res, next) => {
+  .get(isUserLoggedIn, async (req, res) => {
     const { id } = req.params;
     const [data, setData] = await Plans.findAllWithAdminName();
     const [bookings, setBookings] = await Billings.getUserBookingsById(id);
     res.render("components/user/plans", { data, id, bookings });
   })
-  .post(async (req, res) => {
+  .post(isUserLoggedIn, async (req, res) => {
     const { id } = req.params;
     const { peopleSelected } = req.body;
     const [data, setData] = await Plans.getByNoOfPeople(peopleSelected);
@@ -61,7 +75,7 @@ router
 
 router
   .route("/:id/:P_id")
-  .get(async (req, res, next) => {
+  .get(isUserLoggedIn, async (req, res) => {
     const { id, P_id } = req.params;
     const [sights, setSights] = await Attractions.getById(P_id);
     const [vehicles, setvehicles] = await Vehicles.getById(P_id);
@@ -75,31 +89,28 @@ router
       reviews,
     });
   })
-  .post(async (req, res) => {
+  .post(isUserLoggedIn, async (req, res) => {
     const { id, P_id } = req.params;
     const { rating, comment } = req.body;
-    const data = await Reviews.findOne({ U_id: id, P_id: P_id }).exec();
+    const data = await Reviews.findOne({ U_id: id, P_id: P_id });
     if (data == null) {
       const newReview = new Reviews({
         U_id: id,
         P_id: P_id,
         reviews: [{ comments: comment, rating }],
       });
-      try {
-        await newReview.save();
-      } catch (err) {
-        res.render("SQLerror", { err: id[1] });
-      }
+      await newReview.save();
     } else {
       data.reviews.push({ comments: comment, rating });
       await new Reviews(data).save();
     }
+    req.flash("success", `You successfully rated the plan!!`);
     res.redirect(`/user/${id}/${P_id}`);
   });
 
 router
   .route("/:id/:P_id/bill")
-  .get(async (req, res) => {
+  .get(isUserLoggedIn, async (req, res) => {
     const { id, P_id } = req.params;
     let [cost, setCost] = await Plans.getCostById(P_id);
     const [peopleSelected, setPeopleSelected] = await Plans.getAvailSlotsById(
@@ -114,7 +125,7 @@ router
       totAmount: +totAmount.toFixed(2),
     });
   })
-  .post(async (req, res) => {
+  .post(isUserLoggedIn, async (req, res) => {
     const { id, P_id } = req.params;
     const { cost, peopleSelected, type, ref_no } = req.body;
     const [userDetails, setUserDeatails] = await Customer.getNameAndEmailById(
@@ -134,7 +145,7 @@ router
     res.render("components/user/previewBill", { id, P_id, billDetails });
   });
 
-router.post("/:id/:P_id/bill/finish", async (req, res) => {
+router.post("/:id/:P_id/bill/finish", isUserLoggedIn, async (req, res) => {
   const { peopleSelected, ref_no, type, coupon, cost } = req.body;
   const { id, P_id } = req.params;
   const newBill = new Billings(
@@ -150,23 +161,26 @@ router.post("/:id/:P_id/bill/finish", async (req, res) => {
     let x = await Plans.updateSlots(P_id, peopleSelected);
     if (x) {
       await newBill.save();
-      res.redirect(`/user/${id}`);
+      req.flash("success", `Thanks for chooisng the plan!!`);
+      return res.redirect(`/user/${id}`);
     }
-    res.render("SQLerror", { err: "No Available Slots" });
+    req.flash("error", "Seats not available... try again!!");
+    res.redirect(`/user/${id}/${P_id}/bill/`);
   } catch (err) {
-    res.render("SQLerror", { err });
+    res.redirect("/error");
   }
 });
 
-router.route("/:id/:P_id/:R_id").delete(async (req, res) => {
+router.route("/:id/:P_id/:R_id").delete(isUserLoggedIn, async (req, res) => {
   const { id, P_id, R_id } = req.params;
   try {
     const data = await Reviews.findOne({ U_id: id, P_id }).exec();
     data.reviews = removeItemOnce(data.reviews, R_id);
     await new Reviews(data).save();
+    req.flash("success", "succesfully deleated Review..");
     res.redirect(`/user/${id}/${P_id}`);
   } catch (err) {
-    res.render("SQLerror", { err });
+    res.redirect("/error");
   }
 });
 

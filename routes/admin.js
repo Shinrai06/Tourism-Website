@@ -11,6 +11,7 @@ const { storage, cloudinary } = require("../config/Cloudinary");
 const multer = require("multer");
 const upload = multer({ storage });
 const getDate = require("../Public/js/controllers/getDate");
+const { isAdminLoggedIn } = require("../middleWare");
 
 router
   .route("/register")
@@ -21,8 +22,13 @@ router
     const { name, email, password, contact1, contact2 } = req.body;
     const newAdmin = new Admin(name, email, contact1, contact2, password);
     let id = await newAdmin.save();
-    if (id[0] == 0) res.render("SQLerror", { err: id[1] });
-    else res.redirect(`/admin/${id[0]}`);
+    if (id[0] != 0) {
+      req.session.admin = email;
+      req.flash("success", "successfull Registeration!!");
+      return res.redirect(`/admin/${id[0]}`);
+    }
+    req.flash("error", "Already registered");
+    res.redirect("/admin/register");
   });
 
 router
@@ -34,11 +40,16 @@ router
   .post(async (req, res) => {
     const { email, password } = req.body;
     let id = await Admin.validate(email, password);
-    if (id != 0) res.redirect(`/admin/${id}`);
-    else res.render("SQLerror", { err: "Invalid Credentials/ Not Registered" });
+    if (id != 0) {
+      req.session.admin = email;
+      req.flash("success", "successfull login!!");
+      return res.redirect(`/admin/${id}`);
+    }
+    req.flash("error", "Invalid Crediantials!!");
+    res.redirect("/admin/login");
   });
 
-router.route("/:id").get(async (req, res) => {
+router.route("/:id").get(isAdminLoggedIn, async (req, res) => {
   const { id } = req.params;
   const [data, _] = await Plans.getById(id);
   res.render("components/admin/plans", { id, data });
@@ -46,11 +57,11 @@ router.route("/:id").get(async (req, res) => {
 
 router
   .route("/:id/new")
-  .get((req, res) => {
+  .get(isAdminLoggedIn, (req, res) => {
     let { id } = req.params;
     res.render("components/admin/addPlan", { id });
   })
-  .post(async (req, res) => {
+  .post(isAdminLoggedIn, async (req, res) => {
     const { title, loc, expense, photo, days, date, maxPeople } = req.body;
     const { id } = req.params;
     const plan = new Plans(
@@ -65,15 +76,17 @@ router
     );
     try {
       await plan.save();
+      req.flash("success", "added new Plan!!!");
       res.redirect(`/admin/${id}`);
     } catch (err) {
-      res.render("SQLerror", { err });
+      req.flash("error", `Failed to update transport facilities!! ${err}`);
+      res.redirect("/error");
     }
   });
 
 router
   .route("/:id/:P_id")
-  .get(async (req, res) => {
+  .get(isAdminLoggedIn, async (req, res) => {
     const { id, P_id } = req.params;
     const [sights, setSights] = await Attractions.getById(P_id);
     const [vehicles, setvehicles] = await Vehicles.getById(P_id);
@@ -89,30 +102,33 @@ router
       reviews,
     });
   })
-  .post(async (req, res) => {
+  .post(isAdminLoggedIn, async (req, res) => {
     const { P_id, id } = req.params;
     const { vehicle, query_contact, details } = req.body;
     const V = new Vehicles(vehicle, query_contact, details, P_id);
     try {
       await V.save();
-      res.redirect(`${P_id}`);
+      return res.redirect(`${P_id}`);
     } catch (err) {
-      res.render("SQLerror", { err });
+      req.flash("error", `Failed to update transport facilities!! ${err}`);
+      res.redirect("/error");
     }
   })
-  .delete(async (req, res) => {
+  .delete(isAdminLoggedIn, async (req, res) => {
     const { P_id, id } = req.params;
     try {
       await Plans.removeById(P_id);
-      res.redirect(`/admin/${id}`);
+      return res.redirect(`/admin/${id}`);
     } catch (err) {
-      res.render("SQLerror", { err });
+      req.flash("error", `Failed to remove Plans!! ${err}`);
+      res.redirect("/error");
+      console.log(err);
     }
   });
 
 router
   .route("/:id/:P_id/new")
-  .get((req, res) => {
+  .get(isAdminLoggedIn, (req, res) => {
     const { id, P_id } = req.params;
     res.render("components/admin/addSight", { id, P_id });
   })
@@ -130,23 +146,26 @@ router
         res.render("SQLerror", { err });
       }
       await new Photos({ A_id: id, T_id: T_id[0], images: images }).save();
+      req.flash("success", "added new Attractions!!!");
       res.redirect(`/admin/${id}/${P_id}`);
     } catch (err) {
-      res.render("SQLerror", { err });
+      req.flash("error", `Failed to add new Attractions!! ${err}`);
+      res.redirect("/error");
     }
   });
 
-router.delete("/:id/:P_id/vehicle/:V_id", async (req, res) => {
+router.delete("/:id/:P_id/vehicle/:V_id", isAdminLoggedIn, async (req, res) => {
   let { id, V_id, P_id } = req.params;
   try {
     await Vehicles.removeById(V_id);
     res.redirect(`/admin/${id}/${P_id}`);
   } catch (err) {
-    res.render("SQLerror", { err });
+    req.flash("error", `Failed to update the facilities!! ${err}`);
+    res.redirect("/error");
   }
 });
 
-router.delete("/:id/:P_id/:T_id", async (req, res) => {
+router.delete("/:id/:P_id/:T_id", isAdminLoggedIn, async (req, res) => {
   const { P_id, id, T_id } = req.params;
   try {
     const fileNames = await getDate.getFileName(T_id);
@@ -156,7 +175,8 @@ router.delete("/:id/:P_id/:T_id", async (req, res) => {
       await cloudinary.uploader.destroy(filename);
     }
   } catch (err) {
-    res.render("SQLerror", { err });
+    req.flash("error", `Failed to delete the Attraction!! ${err}`);
+    return res.redirect("/error");
   }
   res.redirect(`/admin/${id}/${P_id}`);
 });
