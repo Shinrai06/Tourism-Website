@@ -1,9 +1,9 @@
 <% layout('layout') %>
 
-<section class="p-5">
-  <div class="text-center text-light">
+<section id="bgImg" class="p-5">
+  <div class="text-center">
     <h1>Welcome!!!</h1>
-    <p>
+    <p class="para">
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
       veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
@@ -13,4 +13,21 @@
       est laborum."
     </p>
   </div>
+  <script>
+    (function (d, m) {
+      var kommunicateSettings = {
+        appId: "3996a4867829d4795a3ed4fe477b248be",
+        popupWidget: true,
+        automaticChatOpenOnNavigation: true,
+      };
+      var s = document.createElement("script");
+      s.type = "text/javascript";
+      s.async = true;
+      s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+      var h = document.getElementsByTagName("head")[0];
+      h.appendChild(s);
+      window.kommunicate = m;
+      m._globals = kommunicateSettings;
+    })(document, window.kommunicate || {});
+  </script>
 </section>
